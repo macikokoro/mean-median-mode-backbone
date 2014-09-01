@@ -34,27 +34,29 @@ var Calculator = Backbone.Model.extend({
     }
   },
 
-  findMode: function() {
+  findMode: function () {
     var data = this.get('inputArray');
-    data.sort(function(a, b) {return a-b;});
-    var result = [];
+    data.sort();
 
-    for (var i = 0; i < data.length; i++) {
-      if (data[i + 1] === data[i]) {
-        result.push(data[i]);
+    var counter = [];
+    var mode = [];
+    var max = 0;
+
+    for (var i in data) {
+      if (counter[data[i]] === undefined)
+        counter[data[i]] = 0;
+        counter[data[i]]++;
+
+        if (counter[data[i]] == max) {
+          mode.push(data[i]);
+        }
+        if (counter[data[i]] > max) {
+          max = counter[data[i]];
+          mode = [data[i]];
+        }
       }
+      this.set({mode: mode});
     }
+  });
 
-    var unique = result.filter(function(elem, index, self) {
-      return index == self.indexOf(elem);
-    });
-
-    if (result.length < 1) {
-      this.set({mode: data});
-    } else {
-      this.set({mode: unique});
-    }
-  }
-});
-
-module.exports = Calculator;
+  module.exports = Calculator;

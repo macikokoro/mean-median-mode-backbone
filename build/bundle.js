@@ -46,27 +46,28 @@ var Calculator = Backbone.Model.extend({
     }
   },
 
-  findMode: function() {
+  findMode: function () {
     var data = this.get('inputArray');
-    data.sort(function(a, b) {return a-b;});
-    var result = [];
+    data.sort();
+    var counter = [];
+    var mode = [];
+    var max = 0;
+    for (var i in data) {
+        if (counter[data[i]] === undefined)
+            counter[data[i]] = 0;
+        counter[data[i]]++;
 
-    for (var i = 0; i < data.length; i++) {
-      if (data[i + 1] === data[i]) {
-        result.push(data[i]);
-      }
+        if (counter[data[i]] == max) {
+            mode.push(data[i]);
+        }
+        if (counter[data[i]] > max) {
+            max = counter[data[i]];
+            mode = [data[i]];
+        }
     }
+	this.set({mode: mode});
+}
 
-    var unique = result.filter(function(elem, index, self) {
-      return index == self.indexOf(elem);
-
-    });
-    if (result.length < 1) {
-      this.set({mode: data});
-    } else {
-      this.set({mode: unique});
-    }
-  }
 });
 
 module.exports = Calculator;
@@ -78,13 +79,13 @@ module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<section>\n  <h2>"
     + escapeExpression(((helper = (helper = helpers.Title || (depth0 != null ? depth0.Title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"Title","hash":{},"data":data}) : helper)))
-    + "</h2>\n  <form>\n    <label>Numbers Set: </label>\n    <input type=\"text\" placeholder=\"numbers only no commas\" id=\"input\">\n    <button type=\"button\" id=\"run\">Hit me!</button>\n  </form>\n  <hr/>\n  <p>Total Numbers: <span>"
+    + "</h2>\n  <form>\n    <label>Numbers Set: </label>\n    <input type=\"text\" placeholder=\"numbers only no commas\" id=\"input\">\n    <button type=\"button\" id=\"run\">Hit me!</button>\n  </form>\n  <hr/>\n    <p>Total Numbers: <span>"
     + escapeExpression(((helper = (helper = helpers.totalNums || (depth0 != null ? depth0.totalNums : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"totalNums","hash":{},"data":data}) : helper)))
-    + "</span></p>\n  <p>Mean: <span>"
+    + "</span></p>\n    <p>Mean: <span>"
     + escapeExpression(((helper = (helper = helpers.mean || (depth0 != null ? depth0.mean : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"mean","hash":{},"data":data}) : helper)))
-    + "</span></p>\n  <p>Median: <span>"
+    + "</span></p>\n    <p>Median: <span>"
     + escapeExpression(((helper = (helper = helpers.median || (depth0 != null ? depth0.median : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"median","hash":{},"data":data}) : helper)))
-    + "</span></p>\n  <p>Mode: <span>"
+    + "</span></p>\n    <p>Mode: <span>"
     + escapeExpression(((helper = (helper = helpers.mode || (depth0 != null ? depth0.mode : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"mode","hash":{},"data":data}) : helper)))
     + "</span></p>\n</section>\n";
 },"useData":true});
@@ -95,31 +96,31 @@ var $ = require("./../../../bower_components/jquery/dist/jquery.js");
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-    tagName: 'div',
+  tagName: 'div',
 
-    initialize: function () {
-      this.model.on('change', this.render, this);
-        this.render();
-    },
+  initialize: function () {
+    this.model.on('change', this.render, this);
+      this.render();
+  },
 
-    render: function () {
-        var template = require('../templates/form-template.hbs');
-        var data = this.model.attributes;
-        this.$el.html(template(data));
-        return this;
-    },
-    events: {
-        'submit': 'calculate',
-        'click #run': 'calculate',
-      },
+  render: function () {
+    var template = require('../templates/form-template.hbs');
+    var data = this.model.attributes;
+    this.$el.html(template(data));
+    return this;
+  },
+  events: {
+    'submit': 'calculate',
+    'click #run': 'calculate',
+  },
 
-      calculate: function(e) {
-        e.preventDefault();
-        this.model.set({inputArray: this.$('#input').val().split(' ')});
-        this.model.findMean();
-        this.model.findMedian();
-        this.model.findMode();
-      }
+  calculate: function(e) {
+    e.preventDefault();
+    this.model.set({inputArray: this.$('#input').val().split(' ')});
+    this.model.findMean();
+    this.model.findMedian();
+    this.model.findMode();
+  }
 });
 
 },{"../templates/form-template.hbs":3,"./../../../bower_components/jquery/dist/jquery.js":5,"backbone":6}],5:[function(require,module,exports){
