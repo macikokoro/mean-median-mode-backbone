@@ -1,0 +1,22 @@
+{
+  "name": "mean-median-mode",
+  "version": "0.0.1",
+  "authors": [
+    "JQ"
+  ],
+  "description": "bacbone views",
+  "main": "server.js",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/macikokoro/backbone-events.git",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
